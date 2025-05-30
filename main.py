@@ -39,10 +39,8 @@ async def send_message(text):
         print("❌ 채널을 찾을 수 없습니다.")
 
 def is_weekday():
-    # 오늘이 평일(월~금)인지 확인
-    # weekday() : 월=0, 일=6
     now = datetime.now(tz=KST)
-    return now.weekday() < 5  # 0~4면 True
+    return now.weekday() < 5  # 0~4면 평일
 
 @bot.event
 async def on_ready():
@@ -50,31 +48,16 @@ async def on_ready():
     scheduler.start()
 
     async def job(text):
-        if is_weekday():  # 평일일 때만 메시지 전송
+        if is_weekday():
             await send_message(text)
         else:
             print("주말이라 메시지를 보내지 않습니다.")
 
-    scheduler.add_job(lambda: asyncio.create_task(job("출근 시간입니다.")),
-                      'cron',
-                      hour=9,
-                      minute=0,
-                      timezone=KST)
-    scheduler.add_job(lambda: asyncio.create_task(job("점심시간입니다.")),
-                      'cron',
-                      hour=12,
-                      minute=0,
-                      timezone=KST)
-    scheduler.add_job(lambda: asyncio.create_task(job("점심시간이 끝났습니다.")),
-                      'cron',
-                      hour=13,
-                      minute=30,
-                      timezone=KST)
-    scheduler.add_job(lambda: asyncio.create_task(job("퇴근 시간입니다.")),
-                      'cron',
-                      hour=17,
-                      minute=0,
-                      timezone=KST)
+    # ✅ asyncio.create_task 없이 바로 job 전달
+    scheduler.add_job(job, 'cron', args=["출근 시간입니다."], hour=9, minute=0, timezone=KST)
+    scheduler.add_job(job, 'cron', args=["점심시간입니다."], hour=12, minute=0, timezone=KST)
+    scheduler.add_job(job, 'cron', args=["점심시간이 끝났습니다."], hour=13, minute=30, timezone=KST)
+    scheduler.add_job(job, 'cron', args=["퇴근 시간입니다."], hour=17, minute=0, timezone=KST)
 
 keep_alive()
 bot.run(TOKEN)
