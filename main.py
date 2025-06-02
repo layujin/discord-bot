@@ -54,7 +54,7 @@ async def on_ready():
             print("주말이라 메시지를 보내지 않습니다.")
 
     # ✅ asyncio.create_task 없이 바로 job 전달
-    scheduler.add_job(job, 'cron', args=["출근 시간입니다."], hour=9, minute=0, timezone=KST)
+    scheduler.add_job(job, 'cron', args=["출근 시간입니다."], hour=10, minute=0, timezone=KST)
     scheduler.add_job(job, 'cron', args=["점심시간입니다."], hour=12, minute=0, timezone=KST)
     scheduler.add_job(job, 'cron', args=["점심시간이 끝났습니다."], hour=13, minute=30, timezone=KST)
     scheduler.add_job(job, 'cron', args=["퇴근 시간입니다."], hour=17, minute=0, timezone=KST)
